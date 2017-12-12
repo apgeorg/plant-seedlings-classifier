@@ -1,2 +1,2 @@
-# plant-seedlings-classifier
-Plant Seedlings Classification
+# Plant Seedlings Classification
+
