@@ -44,14 +44,13 @@ def main():
 
     # Get train data
     X_train, y_train, train_filenames = utils.get_train('../input/train', list(lbenc.classes_), img_width, img_height)
-
     # Create and train model
-    model = train(X_train, y_train, epochs=15, batch_size=32)
+    model = train(X_train, y_train, epochs=100, batch_size=32)
+
+    print("+++++++++++++++++++++++++++++++++++++++++++")
 
     # Get test data
-
     X_test, X_test_id = utils.get_test('../input/test', img_width, img_height)
-
     # Predict on test data
     preds = model.predict(X_test, verbose=1)
 
