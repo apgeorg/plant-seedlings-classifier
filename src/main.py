@@ -4,33 +4,59 @@ __author__ = 'apgeorg'
 import numpy as np
 from keras import __version__
 from keras.utils import np_utils
+from keras.preprocessing.image import ImageDataGenerator
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
-import utils
-import models
+import utils, models
 
 # *********************************
 # Seed
-seed = 42
-np.random.seed(seed)
+SEED = 42
+np.random.seed(SEED)
 # Input and  dimensions
 img_width, img_height = (64, 64)
 input_shape = (img_width, img_height, 3)
 # Modelname
-modelname = 'myModel'
+modelname = 'simple_cnn_aug'
 # *********************************
+
+def get_callbacks(path):
+    early_stop = EarlyStopping('val_loss', patience=5, mode="min")
+    model_ckpt = ModelCheckpoint(path, save_best_only=True)
+    return [early_stop, model_ckpt]
+
+def image_augmetation(X, y, batch_size=32):
+    datagen = ImageDataGenerator(horizontal_flip=True, vertical_flip=True,
+                                 width_shift_range=0.1, height_shift_range=0.1,
+                                 zoom_range=0.1, rotation_range=40)
+    datagen.fit(X)
+    return datagen.flow(X, y, batch_size=batch_size, seed=SEED)
 
 def train(X, y, epochs=1, batch_size=32):
     # y categorical
     y_true = np_utils.to_categorical(y, len(utils.get_classes()))
 
     # Split train/test data
-    trX, teX, trY, teY = train_test_split(X, y_true, test_size=0.2, random_state=seed)
+    trX, teX, trY, teY = train_test_split(X, y_true, test_size=0.2, random_state=SEED)
+
+    # Image augmentation
+    gen = image_augmetation(trX, trY)
 
     # Create model
     model = models.create_model(input_shape)
+    #model = models.get_VGG16(input_shape)
+
     # Fit model
-    model.fit(trX, trY, epochs=epochs, batch_size=batch_size)
+    #model.fit(trX, trY, epochs=epochs, batch_size=batch_size, shuffle=True, verbose=1)
+
+    # Fit model
+    model.fit_generator(gen, epochs=epochs,
+              steps_per_epoch=len(X)/batch_size,
+              validation_data=(teX, teY),
+              #callbacks=get_callbacks(path='../models/'+ modelname + '.h5')
+              )
+
     # Save model
     model.save('../models/' + modelname +'.h5')
     print("Model saved.")
@@ -45,7 +71,7 @@ def main():
     # Get train data
     X_train, y_train, train_filenames = utils.get_train('../input/train', list(lbenc.classes_), img_width, img_height)
     # Create and train model
-    model = train(X_train, y_train, epochs=100, batch_size=32)
+    model = train(X_train, y_train, epochs=150, batch_size=32)
 
     print("+++++++++++++++++++++++++++++++++++++++++++")
 
