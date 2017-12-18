@@ -8,6 +8,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
+from keras.models import load_model
 import utils, models
 
 # *********************************
@@ -18,7 +19,7 @@ np.random.seed(SEED)
 img_width, img_height = (64, 64)
 input_shape = (img_width, img_height, 3)
 # Modelname
-modelname = 'simple_cnn_aug'
+modelname = 'model2'
 # *********************************
 
 def get_callbacks(path):
@@ -29,7 +30,7 @@ def get_callbacks(path):
 def image_augmetation(X, y, batch_size=32):
     datagen = ImageDataGenerator(horizontal_flip=True, vertical_flip=True,
                                  width_shift_range=0.1, height_shift_range=0.1,
-                                 zoom_range=0.1, rotation_range=40)
+                                 zoom_range=0.1, rotation_range=90)
     datagen.fit(X)
     return datagen.flow(X, y, batch_size=batch_size, seed=SEED)
 
@@ -44,21 +45,26 @@ def train(X, y, epochs=1, batch_size=32):
     gen = image_augmetation(trX, trY)
 
     # Create model
-    model = models.create_model(input_shape)
-    #model = models.get_VGG16(input_shape)
+    #model = models.get_model1(input_shape)
+    model = models.get_model2(input_shape)
+    #model = models.get_InceptionV3(input_shape)
 
     # Fit model
     #model.fit(trX, trY, epochs=epochs, batch_size=batch_size, shuffle=True, verbose=1)
 
-    # Fit model
-    model.fit_generator(gen, epochs=epochs,
+    # Fit model (generator)
+    try:
+        model.fit_generator(gen, epochs=epochs,
               steps_per_epoch=len(X)/batch_size,
               validation_data=(teX, teY),
-              #callbacks=get_callbacks(path='../models/'+ modelname + '.h5')
+              callbacks=get_callbacks(path='../models/' + modelname + '-{epoch:02d}-{val_loss:.3f}' +'.h5')
               )
+        # Save model
+        model.save('../models/' + modelname + '.h5')
+    except:
+        # Save model on keyboard abort
+        model.save('../models/' + modelname + '_OnExit' + '.h5')
 
-    # Save model
-    model.save('../models/' + modelname +'.h5')
     print("Model saved.")
     return model
 
@@ -70,10 +76,14 @@ def main():
 
     # Get train data
     X_train, y_train, train_filenames = utils.get_train('../input/train', list(lbenc.classes_), img_width, img_height)
+
     # Create and train model
-    model = train(X_train, y_train, epochs=150, batch_size=32)
+    model = train(X_train, y_train, epochs=100, batch_size=32)
 
     print("+++++++++++++++++++++++++++++++++++++++++++")
+
+    # Load model ...
+    #model = load_model('../models/'+'model.h5')
 
     # Get test data
     X_test, X_test_id = utils.get_test('../input/test', img_width, img_height)
@@ -81,7 +91,7 @@ def main():
     preds = model.predict(X_test, verbose=1)
 
     # Create submission
-    utils.create_submission(lbenc.inverse_transform(preds), X_test_id, output_path="../submissions/", filename="simple_cnn", isSubmission=True)
+    utils.create_submission(lbenc.inverse_transform(preds), X_test_id, output_path="../submissions/", filename=modelname, isSubmission=True)
     print('Finished.')
 
 if __name__ == "__main__":
