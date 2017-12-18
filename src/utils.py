@@ -73,4 +73,11 @@ def create_submission(preds, ids, output_path="./", filename="test", isSubmissio
         csvfile = "submission_" + filename + "_" + str(now.strftime("%Y-%m-%d-%H-%M"))
     df.to_csv(output_path + csvfile + ".csv", index=False)
     return df
+    
+def to_csv_ens(preds_true, preds, ids, classes, output_path="./", filename="test"):
+    df1 = pd.DataFrame({"file": pd.Series(ids), "species": pd.Series(preds_true)})
+    df2 = pd.DataFrame(preds, columns=classes)
+    df = pd.concat([df1, df2], axis=1)
+    df.to_csv(output_path + filename + ".csv", index=False)
+    return df
 
