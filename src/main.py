@@ -16,10 +16,10 @@ import utils, models
 SEED = 42
 np.random.seed(SEED)
 # Input and  dimensions
-img_width, img_height = (64, 64)
+img_width, img_height = (200, 200)
 input_shape = (img_width, img_height, 3)
 # Modelname
-modelname = 'model2'
+modelname = 'resnet50_test'
 # *********************************
 
 def get_callbacks(path):
@@ -45,9 +45,9 @@ def train(X, y, epochs=1, batch_size=32):
     gen = image_augmetation(trX, trY)
 
     # Create model
-    #model = models.get_model1(input_shape)
-    model = models.get_model2(input_shape)
+    #model = models.get_model2(input_shape)
     #model = models.get_InceptionV3(input_shape)
+    model = models.get_ResNet50(input_shape)    
 
     # Fit model
     #model.fit(trX, trY, epochs=epochs, batch_size=batch_size, shuffle=True, verbose=1)
@@ -83,7 +83,7 @@ def main():
     print("+++++++++++++++++++++++++++++++++++++++++++")
 
     # Load model ...
-    #model = load_model('../models/'+'model.h5')
+    #model = load_model('../models/'+ 'model2_f0.86/'+ 'model2-64-0.341.h5')
 
     # Get test data
     X_test, X_test_id = utils.get_test('../input/test', img_width, img_height)

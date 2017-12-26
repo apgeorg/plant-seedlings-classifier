@@ -5,6 +5,7 @@ from keras.models import Sequential, Model
 from keras.layers.normalization import BatchNormalization
 from keras.applications.vgg16 import VGG16
 from keras.applications.inception_v3 import InceptionV3
+from keras.applications.resnet50 import ResNet50
 import utils
 
 def get_model1(input_shape=(128, 128, 3)):
@@ -67,40 +68,6 @@ def get_model2(input_shape=(128, 128, 3)):
     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     return model
 
-def get_model3(input_shape=(128, 128, 3)):
-    model = Sequential()
-    # Convolution + Pooling Layer
-    model.add(Conv2D(64, (7, 7), padding='same', input_shape=input_shape))
-    model.add(BatchNormalization())
-    model.add(LeakyReLU())
-    model.add(MaxPooling2D(pool_size=(4, 4)))
-    model.add(Dropout(0.3))
-    # Convolution + Pooling Layer
-    model.add(Conv2D(64, (5, 5), padding='same'))
-    model.add(BatchNormalization())
-    model.add(LeakyReLU())
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(AveragePooling2D(pool_size=(2, 2)))
-    # Convolution + Pooling Layer
-    model.add(Conv2D(256, (5, 5), padding='same'))
-    model.add(BatchNormalization())
-    model.add(LeakyReLU())
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(AveragePooling2D(pool_size=(2, 2)))
-    # Convolution + Pooling Layer
-    model.add(BatchNormalization())
-    model.add(Dropout(0.3))
-    model.add(Conv2D(64, (3, 3), padding='same'))
-    model.add(PReLU())
-    # Flatten
-    model.add(Flatten())
-    # Output
-    model.add(Dense(len(utils.get_classes()), activation='softmax'))
-
-    optimizer = Adam(1e-4)
-    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-    return model
-
 def create_conv_model(model):
     last_conv_idx = [i for i, layer in enumerate(model.layers) if type(layer) is Conv2D][-1]
     layers = model.layers[:last_conv_idx+1]
@@ -130,7 +97,7 @@ def get_VGG16(input_shape=(128, 128, 3)):
     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     return model
 
-def get_InceptionV3(input_shape=(128, 128, 3)):
+def get_InceptionV3(input_shape=(299, 299, 3)):
     model = InceptionV3(weights='imagenet', include_top=False, input_shape=input_shape)
     model = create_conv_model(model)
     model = stack_on_top(0.6, model)
@@ -138,3 +105,10 @@ def get_InceptionV3(input_shape=(128, 128, 3)):
     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     return model
 
+def get_ResNet50(input_shape=(224, 224, 3)):
+    model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
+    model = create_conv_model(model)
+    model = stack_on_top(0.6, model)
+    optimizer = Adam(1e-4)
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    return model
