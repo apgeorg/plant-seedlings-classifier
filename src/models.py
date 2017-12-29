@@ -8,35 +8,6 @@ from keras.applications.inception_v3 import InceptionV3
 from keras.applications.resnet50 import ResNet50
 import utils
 
-def get_model1(input_shape=(128, 128, 3)):
-    model = Sequential()
-    # Convolution + Pooling Layer
-    model.add(Conv2D(32, (3, 3), padding='same', input_shape=input_shape, activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    # Convolution + Pooling Layer
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    # Convolution + Pooling Layer
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    # Convolution + Pooling Layer
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    # Flatten
-    model.add(Flatten())
-    # Fully-Connection
-    model.add(Dense(100, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(64, activation='relu'))
-    # Output
-    model.add(Dense(len(utils.get_classes()), activation='softmax'))
-
-    optimizer = Adam(1e-4)
-    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-    return model
-
 def get_model2(input_shape=(128, 128, 3)):
     model = Sequential()
     model.add(BatchNormalization(input_shape=input_shape))

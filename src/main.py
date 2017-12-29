@@ -16,10 +16,10 @@ import utils, models
 SEED = 42
 np.random.seed(SEED)
 # Input and  dimensions
-img_width, img_height = (200, 200)
+img_width, img_height = (299, 299)
 input_shape = (img_width, img_height, 3)
 # Modelname
-modelname = 'resnet50_test'
+modelname = 'inceptV3'
 # *********************************
 
 def get_callbacks(path):
@@ -46,8 +46,8 @@ def train(X, y, epochs=1, batch_size=32):
 
     # Create model
     #model = models.get_model2(input_shape)
-    #model = models.get_InceptionV3(input_shape)
-    model = models.get_ResNet50(input_shape)    
+    model = models.get_InceptionV3(input_shape)
+    #model = models.get_ResNet50(input_shape)
 
     # Fit model
     #model.fit(trX, trY, epochs=epochs, batch_size=batch_size, shuffle=True, verbose=1)
