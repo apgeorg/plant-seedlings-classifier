@@ -48,7 +48,7 @@ def train(X, y, epochs=1, batch_size=32):
     #model = models.get_model2(input_shape)
     #model = models.get_InceptionV3(input_shape)
     #model = models.get_ResNet50(input_shape)
-    model = models.get_InceptionV3(input_shape)
+    model = models.get_InceptionResNetV2(input_shape)
 
     # Fit model
     #model.fit(trX, trY, epochs=epochs, batch_size=batch_size, shuffle=True, verbose=1)
