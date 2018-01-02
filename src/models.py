@@ -6,6 +6,8 @@ from keras.layers.normalization import BatchNormalization
 from keras.applications.vgg16 import VGG16
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.resnet50 import ResNet50
+from keras.applications.inception_resnet_v2 import InceptionResNetV2
+
 import utils
 
 def get_model2(input_shape=(128, 128, 3)):
@@ -78,6 +80,14 @@ def get_InceptionV3(input_shape=(299, 299, 3)):
 
 def get_ResNet50(input_shape=(224, 224, 3)):
     model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
+    model = create_conv_model(model)
+    model = stack_on_top(0.6, model)
+    optimizer = Adam(1e-4)
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    return model
+
+def get_InceptionResNetV2(input_shape=(299, 299, 3)):
+    model = InceptionResNetV2(weights='imagenet', include_top=False, input_shape=input_shape)
     model = create_conv_model(model)
     model = stack_on_top(0.6, model)
     optimizer = Adam(1e-4)
