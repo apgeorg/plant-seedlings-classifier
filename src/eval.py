@@ -3,7 +3,7 @@ from sklearn.preprocessing import LabelBinarizer
 from keras.models import load_model
 
 img_width, img_height = (299, 299)
-modelname = 'inceptResNetV2'
+modelname = 'model'
 
 def eval():
     # Get classes
@@ -11,7 +11,7 @@ def eval():
     lbenc = lb.fit(utils.get_classes())
 
     # Load model
-    model = load_model('../models/' + 'inceptResNetV2-03-0.410.h5')
+    model = load_model('../models/' + 'model.h5')
 
     # Get test data
     X_test, X_test_id = utils.get_test('../input/test', img_width, img_height)
