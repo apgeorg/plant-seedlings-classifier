@@ -3,6 +3,9 @@ input/
 submissions/
 models/
 
+# Notebooks
+*.ipynb
+
 # PyCharm
 .idea
 
