@@ -93,7 +93,7 @@ def main():
 
     # Create submission
     utils.create_submission(lbenc.inverse_transform(preds), X_test_id, output_path="../submissions/", filename=modelname, isSubmission=True)
-    utils.to_csv_ens(lbenc.inverse_transform(preds), preds, X_test_id, utils.get_classes(), output_path="../submissions/", filename=modelname):
+    utils.to_csv_ens(lbenc.inverse_transform(preds), preds, X_test_id, utils.get_classes(), output_path="../submissions/", filename=modelname)
     print('Finished.')
 
 if __name__ == "__main__":
