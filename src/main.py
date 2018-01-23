@@ -19,7 +19,7 @@ np.random.seed(SEED)
 img_width, img_height = (299, 299)
 input_shape = (img_width, img_height, 3)
 # Modelname
-modelname = 'inceptResNetV2'
+modelname = 'inceptV3-4'
 # *********************************
 
 def get_callbacks(path):
@@ -46,9 +46,9 @@ def train(X, y, epochs=1, batch_size=32):
 
     # Create model
     #model = models.get_model2(input_shape)
-    #model = models.get_InceptionV3(input_shape)
+    model = models.get_InceptionV3(input_shape)
     #model = models.get_ResNet50(input_shape)
-    model = models.get_InceptionResNetV2(input_shape)
+    #model = models.get_InceptionResNetV2(input_shape)
 
     # Fit model
     #model.fit(trX, trY, epochs=epochs, batch_size=batch_size, shuffle=True, verbose=1)
@@ -93,6 +93,7 @@ def main():
 
     # Create submission
     utils.create_submission(lbenc.inverse_transform(preds), X_test_id, output_path="../submissions/", filename=modelname, isSubmission=True)
+    utils.to_csv_ens(lbenc.inverse_transform(preds), preds, X_test_id, utils.get_classes(), output_path="../submissions/", filename=modelname):
     print('Finished.')
 
 if __name__ == "__main__":
